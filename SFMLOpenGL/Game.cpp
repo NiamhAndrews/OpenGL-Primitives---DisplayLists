@@ -15,7 +15,7 @@ void Game::run()
 
 	while (isRunning) {
 
-		cout << "Game running..." << endl;
+		//cout << "Game running..." << endl;
 
 		while (window.pollEvent(event))
 		{
@@ -33,16 +33,34 @@ void Game::run()
 void Game::initialize()
 {
 	isRunning = true;
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); 
+	glMatrixMode(GL_PROJECTION); 
+	glLoadIdentity(); 
+	gluPerspective(45.0, window.getSize().x / window.getSize().y, 1.0, 500.0); 
+	glMatrixMode(GL_MODELVIEW);
 }
 
 void Game::update()
 {
-	cout << "Update up" << endl;
+	//cout << "Draw up" << endl; 
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+	glBegin(GL_TRIANGLES); 
+	{ 
+		glVertex3f(0.0, 2.0, -5.0); 
+		glVertex3f(-2.0, -2.0, -5.0); 
+		glVertex3f(2.0, -2.0, -5.0); 
+	} 
+	glEnd(); 
+
+
+	window.display();
 }
 
 void Game::draw()
 {
-	cout << "Draw up" << endl;
+	//cout << "Draw up" << endl;
 }
 
 void Game::unload()
@@ -50,3 +68,15 @@ void Game::unload()
 	cout << "Cleaning up" << endl;
 }
 
+
+//Finally modify your code to include drawing of the Primitives 
+//GL_POINTS 
+//GL_LINES 
+//GL_LINE_STRIP 
+//GL_LINE_LOOP 
+//GL_TRIANGLES 
+//GL_TRIANGLE_STRIP 
+//GL_TRIANGLE_FAN 
+//GL_QUADS 
+//GL_QUAD_STRIP 
+//GL_POLYGON
