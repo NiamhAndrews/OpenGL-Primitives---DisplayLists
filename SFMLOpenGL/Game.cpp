@@ -1,7 +1,15 @@
 #include <Game.h>
 
-Game::Game() : window(VideoMode(800, 600), "OpenGL")
+
+bool flip = false;
+int current = 1;
+
+
+
+Game::Game() : window(VideoMode(800, 600), "OpenGL"), primatives(10)
 {
+
+	 index = glGenLists(primatives);
 }
 
 Game::~Game() {}
@@ -12,10 +20,12 @@ void Game::run()
 	initialize();
 
 	Event event;
+	sf::Clock gameClock;
+	sf::Time timeSinceLastUpdate = sf::Time::Zero;
+	const float FPS = 60.0f;
+	sf::Time timePerFrame = sf::seconds(1.0f / FPS);
 
 	while (isRunning) {
-
-		//cout << "Game running..." << endl;
 
 		while (window.pollEvent(event))
 		{
@@ -24,7 +34,15 @@ void Game::run()
 				isRunning = false;
 			}
 		}
-		update();
+
+		timeSinceLastUpdate += gameClock.restart();
+
+		if (timeSinceLastUpdate > timePerFrame)
+		{
+			timeSinceLastUpdate -= timePerFrame;
+			update();
+		}
+		
 		draw();
 	}
 
@@ -39,222 +57,268 @@ void Game::initialize()
 	glLoadIdentity(); 
 	gluPerspective(45.0, window.getSize().x / window.getSize().y, 1.0, 500.0); 
 	glMatrixMode(GL_MODELVIEW);
+	glTranslatef(0.0f, 0.0f, -5.0f);
+
+	glNewList(index, GL_COMPILE);
+	glBegin(GL_TRIANGLES);
+	{
+		glColor3f(0.0f, 0.9f, 0.8f);
+		glVertex3f(0.0, 1.0, 0.0);
+		glColor3f(0.1f, 0.2f, 0.3f);
+		glVertex3f(-1.0, -1.0, 0.0);
+		glColor3f(0.1f, 0.2f, 0.3f);
+		glVertex3f(1.0, -1.0, 0.0);
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 1, GL_COMPILE);
+	glBegin(GL_POINTS);
+	{
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(0.0, 1.0, 0.0);
+		glVertex3f(-1.0, -1.0, 0.0);
+		glVertex3f(1.0, -1.0, 0.0);
+		glVertex3f(2.0, 1.0, 0.0);
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 2, GL_COMPILE);
+	glBegin(GL_LINES);
+	{
+		glColor3f(0.6f, 0.0f, 0.0f);
+		glVertex3f(0.0, 1.0, 0.0);
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(-1.0, -1.0, 0.0);
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(1.0, -1.0, 0.0);
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(2.0, 1.0, 0.0);
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 3, GL_COMPILE);
+	glBegin(GL_LINE_STRIP);
+	{
+		glColor3f(0.6f, 0.0f, 0.0f);
+		glVertex3f(0.0, 1.0, 0.0);
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(-1.0, -1.0, 0.0);
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(1.0, -1.0, 0.0);
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(2.0, 1.0, 0.0);
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 4, GL_COMPILE);
+	glBegin(GL_LINE_LOOP);
+	{
+		glColor3f(0.6f, 0.0f, 0.0f);
+		glVertex3f(0.0, 1.0, 0.0);
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(-1.0, -1.0, 0.0);
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(1.0, -1.0, 0.0);
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(2.0, 1.0, 0.0);
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 5, GL_COMPILE);
+	glBegin(GL_TRIANGLE_STRIP);
+	{
+		glColor3f(0.8f, 0.0f, 0.0f);
+		glVertex3f(-2.0, -1.0, 0.0);
+
+		glColor3f(1.0f, 0.7f, 0.0f);
+		glVertex3f(-1.0, 1.0, 0.0);
+
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(0.0, -1.0, 0.0);
+
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(1.0, 1.0, 0.0);
+
+		glColor3f(0.0f, 1.0f, 1.0f);
+		glVertex3f(2.0, -1.0, 0.0);
+
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 6, GL_COMPILE);
+	glBegin(GL_TRIANGLE_FAN);
+	{
+		glColor3f(0.6f, 0.0f, 0.0f);
+		glVertex3f(-2.0, -1.0, 0.0);
+
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(-2.0, 2.0, 0.0);
+
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(-1.0, 2.0, 0.0);
+
+		glColor3f(0.0f, 0.3f, 0.5f);
+		glVertex3f(0.0, 1.0, 0.0);
+
+		glColor3f(0.6f, 0.0f, 0.0f);
+		glVertex3f(0.5, -0.5, 0.0);
+
+		glColor3f(0.9f, 0.9f, 0.0f);
+		glVertex3f(0.5, -1.5, 0.0);
+
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 7, GL_COMPILE);
+	glBegin(GL_QUADS);
+	{
+		glColor3f(0.6f, 0.0f, 0.0f);
+		glVertex3f(0.0, 1.0, 0.0);
+
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(-1.0, -1.0, 0.0);
+
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(1.0, -1.0, 0.0);
+
+		glColor3f(0.0f, 0.3f, 0.7f);
+		glVertex3f(2.0, 1.0, 0.0);
+
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 8, GL_COMPILE);
+	glBegin(GL_QUAD_STRIP);
+	{
+		glColor3f(0.7f, 0.0f, 0.0f);
+		glVertex3f(-2.0f, -1.0f, 0.0);
+
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(-1.0f, 1.0f, 0.0);
+
+		glColor3f(0.4f, 1.0f, 0.0f);
+		glVertex3f(0.0f, -1.0f, 0.0);
+
+		glColor3f(0.0f, 0.1f, 0.9f);
+		glVertex3f(1.0f, 1.0f, 0.0);
+
+		glColor3f(0.0f, 0.5f, 0.5f);//last point
+		glVertex3f(1.0f, -2.0f, 0.0);
+
+		glColor3f(0.9f, 0.9f, 0.0f);//2nd last point
+		glVertex3f(2.0f, 0.0f, 0.0);
+
+	}
+	glEnd();
+	glEndList();
+
+	glNewList(index + 9, GL_COMPILE);
+	glBegin(GL_POLYGON);
+	{
+		glColor3f(0.0f, 1.0f, 1.0f);
+		glVertex3f(-2.0, -1.0, 0.0);
+
+		glColor3f(0.5f, 0.0f, 0.9f);
+		glVertex3f(-0.5, 1.0, 0.0);
+
+		glColor3f(0.7f, 0.0f, 0.4f);
+		glVertex3f(0.5, 1.0, 0.0);
+
+		glColor3f(1.0f, 0.3f, 0.0f);
+		glVertex3f(2.0, -1.0, 0.0);
+
+	}
+	glEnd();
+	glEndList();
+
+
+	/*glNewList(index + 10, GL_COMPILE);
+	glBegin(GL_TRIANGLES);
+	{
+		glColor3f(0.0f, 1.0f, 0.0f);
+		glVertex3f(0.2, 0.0, -2.0);
+		glVertex3f(-2.0, -2.0, -2.0);
+		glVertex3f(2.0, -2.0, -2.0);
+	}
+	glEnd();
+	glEndList();
+*/
+
+
 }
 
 void Game::update()
-{
-	//cout << "Draw up" << endl; 
-	
-	if ( (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad1)) )
+{ 
+
+	elapsed = clock.getElapsedTime();
+
+	if (elapsed.asSeconds() >= 1.0f)
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_TRIANGLES);
+		clock.restart();
+
+		current++;
+		if (current > primatives)
 		{
-			glColor3f(0.0f, 0.9f, 0.8f);
-			glVertex3f(0.0, 1.0, -5.0);
-			glColor3f(0.1f, 0.2f, 0.3f);
-			glVertex3f(-1.0, -1.0, -5.0);
-			glColor3f(0.1f, 0.2f, 0.3f);
-			glVertex3f(1.0, -1.0, -5.0);
-
-
-			//Bright Orange
-			//glColor3f(1.0f, 0.3f, 0.0f);
-
-			//Super vivid green
-			//glColor3f(0.4f, 1.0f, 0.0f);
-
-			//Sky blue
-			//glColor3f(0.0f, 1.0f, 1.0f);
-
-			//Bright purple
-			//glColor3f(0.5f, 0.0f, 0.9f);
-
-			//Moave
-			//glColor3f(0.7f, 0.0f, 0.4f);
-
-			//Link green
-
-			//Mint
-			//glColor3f(0.0f, 0.9f, 0.8f);
-			//Deep Navy
-			//glColor3f(0.1f, 0.2f, 0.3f);
-
-			std::cout << "GL Triangles\n\n";
+			current = 1;
 		}
-		glEnd();
-	}
-
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad2)))
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_POINTS);
-		{
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(0.0, 1.0, -5.0);
-			glVertex3f(-1.0, -1.0, -5.0);
-			glVertex3f(1.0, -1.0, -5.0);
-			glVertex3f(2.0, 1.0, -5.0);
-
-			std::cout << "GL Points\n\n";
-		}
-		glEnd();
-	}
-
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad3)))
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_LINES);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(0.0, 1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-1.0, -1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(1.0, -1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(2.0, 1.0, -5.0);
-			std::cout << "GL Lines\n\n";
-		}
-		glEnd();
-	}
-
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad4)))
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_LINE_STRIP);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(0.0, 1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-1.0, -1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(1.0, -1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(2.0, 1.0, -5.0);
-			std::cout << "GL Line strip\n\n";
-		}
-		glEnd();
-	}
-
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad5)))
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_LINE_LOOP);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(0.0, 1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-1.0, -1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(1.0, -1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(2.0, 1.0, -5.0);
-			std::cout << "GL Line loop\n\n";
-		}
-		glEnd();
-	}
-
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num6)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad6)))
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_TRIANGLE_STRIP);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(-2.0, -1.0, -5.0);//causing shape point overlap
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-1.0, 1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(0.0, -1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(1.0, 1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(2.0, -1.0, -5.0);
-			std::cout << "GL Triangle Strip\n\n";
-		}
-		glEnd();
-	}
-
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num7)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad7)))
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_TRIANGLE_FAN);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(0.0, 1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-1.0, -1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(1.0, -1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(2.0, 1.0, -5.0);
-			std::cout << "GL Triangle Fan\n\n";
-		}
-		glEnd();
-	}
-
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num8)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad8)))
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_QUADS);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(0.0, 1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-1.0, -1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(1.0, -1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(2.0, 1.0, -5.0);
-			std::cout << "GL Quads\n\n";
-		}
-		glEnd();
 	}
 
 
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num9)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad9)))
+
+
+	//Load identity
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::I)))
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_QUAD_STRIP);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(-2.0f, -1.0f, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-1.0f, 1.0f, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(0.0f, -1.0f, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(1.0f, 1.0f, -5.0);
-			//glColor3f(0.4f, 1.0f, 0.0f);
-			glColor3f(0.0f, 0.1f, 0.9f);
-			glVertex3f(2.0f, 1.0f, -5.0);
-			glColor3f(0.0f, 0.5f, 0.5f);
-			glVertex3f(2.0f, -2.0f, -5.0);
-			std::cout << "GL Quad Strip\n\n";
-		}
-		glEnd();
+		glLoadIdentity();
+		glTranslatef(0.0f, 0.0f, -5.0f);
+	}
+
+	//Rotate Right
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))
+	{
+		glRotatef(1.0f, 0.0f, 0.0f, 1.0f);
+	}
+	//Rotate Left
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Left)))
+	{
+		glRotatef(1.0f, 0.0f, 0.0f, -1.0f);
+	}
+
+	//Translate
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::T)))
+	{
+		glTranslatef(0.05f, 0.0f, 0.0f);
+	}
+
+	//Increase Scale
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Up)))
+	{
+		glScalef(1.01f, 1.01f, 1.01f);
+	}
+	//Decrease Scale
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Down)))
+	{
+		glScalef(0.995f, 0.995f, 0.995f);
 	}
 
 
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad0)))
+
+	//--------------------------------------------------------------------------------------Shape creation
+
+	/*if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) || (sf::Keyboard::isKeyPressed(sf::Keyboard::Numpad3)))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBegin(GL_POLYGON);
-		{
-			glColor3f(0.6f, 0.0f, 0.0f);
-			glVertex3f(-2.0, -1.0, -5.0);//causing shape point overlap
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(-0.5, 1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			//glVertex3f(0.0, -1.0, -5.0);
-			glColor3f(1.0f, 0.3f, 0.0f);
-			glVertex3f(0.5, 1.0, -5.0);
-			glColor3f(0.4f, 1.0f, 0.0f);
-			glVertex3f(2.0, -1.0, -5.0);
-			std::cout << "GL Polygon\n\n";
-		}
-		glEnd();
-	}
+
+		std::cout << "GL Lines\n\n";
+	}*/
 
 
 
@@ -262,9 +326,12 @@ void Game::update()
 	window.display();
 }
 
+
+
 void Game::draw()
 {
-	//cout << "Draw up" << endl;
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glCallList(current);
 }
 
 void Game::unload()
@@ -272,15 +339,3 @@ void Game::unload()
 	cout << "Cleaning up" << endl;
 }
 
-
-//Finally modify your code to include drawing of the Primitives 
-//1 GL_TRIANGLES 
-//2 GL_POINTS 
-//3 GL_LINES 
-//4 GL_LINE_STRIP 
-//5 GL_LINE_LOOP 
-//6 GL_TRIANGLE_STRIP 
-//7 GL_TRIANGLE_FAN 
-//8 GL_QUADS 
-//9 GL_QUAD_STRIP 
-//0 GL_POLYGON
